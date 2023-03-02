@@ -1,48 +1,39 @@
 #include "binary_trees.h"
 
+int binary_tree_is_bst(const binary_tree_t *tree);
+int is_bst_helper(const binary_tree_t *tree, int low, int high);
 /**
- * binary_tree_is_leaf - checks if a node is a leaf
+ * binary_tree_is_bst - Checks if a binary tree is a valid Binary Search Tree.
  *
- * @node: pointer to the node to check
- * Return: 1 if node is a leaf, otherwise 0
+ * @tree: A pointer to the root node of the tree to check.
+ *
+ * Return: 1 if tree is a valid BST, and 0 otherwise.
  */
-int binary_tree_is_leaf(const binary_tree_t *node)
+int binary_tree_is_bst(const binary_tree_t *tree)
 {
-	int leaf = 0;
+	if (tree == NULL)
+		return (0);
 
-	if (node && !(node->left) && !(node->right))
-		leaf = 1;
-
-	return (leaf);
+	return (is_bst_helper(tree, INT_MIN, INT_MAX));
 }
 
 /**
- * check_parent - checks if node has a lower/higher than its grand parent
+ * is_bst_helper - Checks if a binary tree is a valid binary search tree.
  *
- * @tree: actual node
- * Return: 1 if actual node has an appropiartely value, 0 otherwise
+ * @tree: A pointer to the root node of the tree to check.
+ * @low: The value of the smallest node visited thus far.
+ * @high: The value of the largest node visited this far.
+ *
+ * Return: If the tree is a valid BST, 1, otherwise, 0.
  */
-int check_parent(const binary_tree_t *tree)
+int is_bst_helper(const binary_tree_t *tree, int low, int high)
 {
-	const binary_tree_t *prnt;
-	const binary_tree_t *grand_prnt;
-
-	if (tree == NULL || tree->parent == NULL || tree->parent->parent == NULL)
-		return (1);
-
-	prnt = tree->parent;
-	grand_prnt = prnt->parent;
-
-	while (prnt && grand_prnt)
+	if (tree != NULL)
 	{
-		if (prnt->n < grand_prnt->n && tree->n >= grand_prnt->n)
+		if (tree->n < low || tree->n > high)
 			return (0);
-
-		if (prnt->n > grand_prnt->n && tree->n <= grand_prnt->n)
-			return (0);
-
-		prnt = prnt->parent;
-		grand_prnt = prnt->parent;
+		return (is_bst_helper(tree->left, low, tree->n - 1) &&
+			is_bst_helper(tree->right, tree->n + 1, high));
 	}
 
 	return (1);
